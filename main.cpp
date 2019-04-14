@@ -432,18 +432,25 @@ void Giv(double *A, double *Q, int N, int thread) {
 				}
 				//cout << " c = " << c << " s = " << s << endl;
 			//---------								
+//#pragma omp parallel for
 				for (int y = 0; y < N; y++) {
-					t1 = A[(i-1)*N + y];
+#pragma omp sections 
+{
+#pragma omp section 
+{
+					t1 = A[(i - 1)*N + y];
 					t2 = A[i*N + y];
-					A[(i - 1)*N+ y] = c * t1 - s * t2;
-					A[i*N + y] = s * t1 + c * t2;
-//					cout << "A: " << endl; PrintMatrix(A, N, N);
-
+					A[(i - 1)*N + y] = c * t1 - s * t2;
+					A[i*N + y] = s * t1 + c * t2; 
+}					//					cout << "A: " << endl; PrintMatrix(A, N, N);
+#pragma omp section 
+{
 					q1 = Q[(i - 1)*N + y];
 					q2 = Q[i*N + y];
 					Q[(i - 1)*N + y] = c * q1 - s * q2;
 					Q[i*N + y] = s * q1 + c * q2;
-//					cout << "Q: " << endl; PrintMatrix(Q, N, N);
+}					//					cout << "Q: " << endl; PrintMatrix(Q, N, N);
+}
 				}
 								
 		}
